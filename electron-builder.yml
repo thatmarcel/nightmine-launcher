@@ -1,0 +1,12 @@
+appId: com.thatmarcel.nightmine.launcher
+productName: Nightmine Launcher
+copyright: Copyright © thatmarcel
+directories:
+  output: dist
+  buildResources: resources
+files:
+  - from: .
+    filter:
+      - package.json
+      - app
+publish: null
