@@ -77,6 +77,8 @@ export default function createWindow(windowName, options) {
     },
   });
 
+  win.removeMenu();
+
   win.setResizable(false);
 
   win.on('close', saveState);
