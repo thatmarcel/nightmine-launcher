@@ -141,12 +141,6 @@ ipcMain.handle("launch-game", async (event, accessToken, username, uuid) => {
 
     const minecraftDirectory = app.getPath("appData") + (process.platform === "darwin" ? "/minecraft" : "/.minecraft");
 
-    console.log("================================");
-    console.log("accessToken: " + accessToken);
-    console.log("username: " + username);
-    console.log("uuid: " + uuid);
-    console.log("================================");
-
     launch({
         gamePath: minecraftDirectory,
         javaPath: javaExecutablePath,
