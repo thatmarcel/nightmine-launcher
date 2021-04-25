@@ -111,6 +111,7 @@ ipcMain.handle("check-if-game-installed", async (event, version) => {
 
     try {
         await fs.promises.access(`${minecraftDirectory}/versions/${version}/${version}.jar`);
+        await fs.promises.access(`${minecraftDirectory}/versions/${version}/${version}.json`);
         return true;
     } catch {
         return false;
