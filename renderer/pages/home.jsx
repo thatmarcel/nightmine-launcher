@@ -164,7 +164,7 @@ const Home = () => {
             await ipcRenderer.invoke("delete-file", jreArchiveFilePath);
             console.log("JRE archive deleted");
     
-            const jreName = jreURL.split("/").pop().split(".").slice(0, -1).join(".");
+            const jreName = jreURL.split("/").pop().split(".").slice(0, platformInfo.platform === "linux" ? -2 : -1).join(".");
     
             if (platformInfo.platform === "darwin") {
                 console.log("Moving JRE folder (macOS)...");
@@ -182,7 +182,7 @@ const Home = () => {
         }
 
         console.log("Starting agent download...");
-        await ipcRenderer.invoke("download-file", "https://1107479269.rsc.cdn77.org/agents/189.jar", "agents/189.jar");
+        await ipcRenderer.invoke("download-file", "https://static.cdn.nightmine.thatmarcel.com/agents/189.jar", "agents/189.jar");
         console.log("Agent downloaded");
 
         console.log("Check if game installed...");

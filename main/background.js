@@ -1,9 +1,10 @@
 import { app, ipcMain, BrowserWindow } from "electron";
 import path from "path";
+import fsPromises from "fs/promises";
 import fs from "fs";
 import serve from "electron-serve";
 import unzipper from "unzipper";
-import tar from "tar-fs";
+import tar from "tar-fs"
 import gunzip from "gunzip-maybe";
 import updater from "electron-simple-updater";
 import { launch } from "@xmcl/core";
@@ -72,7 +73,7 @@ ipcMain.handle("get-platform", (event) => {
 
 ipcMain.handle("check-if-file-exists", async (event, filePath) => {
     try {
-        await fs.promises.access(path.join(getDataPath(), filePath.split("/").join(path.sep)));
+        await fsPromises.access(path.join(getDataPath(), filePath.split("/").join(path.sep)));
         return true;
     } catch {
         return false;
@@ -85,16 +86,16 @@ ipcMain.handle("download-file", async (event, url, filePath) => {
     const directoryPath = path.join(getDataPath(), pathComponents.join(path.sep));
 
     try {
-        fs.promises.mkdir(directoryPath, {
+        fsPromises.mkdir(directoryPath, {
             recursive: true
         });
     } catch {}
 
     try {
-        await fs.promises.unlink(path.join(getDataPath(), filePath.split("/").join(path.sep)));
+        await fsPromises.unlink(path.join(getDataPath(), filePath.split("/").join(path.sep)));
     } catch {
         try {
-            fs.rmSync(path.join(getDataPath(), filePath.split("/").join(path.sep)), { recursive: true, force: true });
+            fsPromises.rmSync(path.join(getDataPath(), filePath.split("/").join(path.sep)), { recursive: true, force: true });
         } catch {}
     }
 
@@ -110,8 +111,8 @@ ipcMain.handle("check-if-game-installed", async (event, version) => {
     const minecraftDirectory = app.getPath("appData") + (process.platform === "darwin" ? "/minecraft" : "/.minecraft");
 
     try {
-        await fs.promises.access(`${minecraftDirectory}/versions/${version}/${version}.jar`);
-        await fs.promises.access(`${minecraftDirectory}/versions/${version}/${version}.json`);
+        await fsPromises.access(`${minecraftDirectory}/versions/${version}/${version}.jar`);
+        await fsPromises.access(`${minecraftDirectory}/versions/${version}/${version}.json`);
         return true;
     } catch {
         return false;
@@ -135,7 +136,7 @@ ipcMain.handle("install-game", async (event, requestedVersion) => {
 
 ipcMain.handle("launch-game", async (event, accessToken, username, uuid) => {
     const javaExecutablePath = path.join(getDataPath(), `jre/bin/java${process.platform.startsWith("win") ? ".exe" : ""}`.split("/").join(path.sep));
-    await fs.promises.chmod(javaExecutablePath, "755");
+    await fsPromises.chmod(javaExecutablePath, "755");
 
     const agentPath = path.join(getDataPath(), ["agents", "189.jar"].join(path.sep));
 
@@ -163,31 +164,31 @@ ipcMain.handle("launch-game", async (event, accessToken, username, uuid) => {
 
 ipcMain.handle("delete-file", async (event, filePath) => {
     try {
-        await fs.promises.unlink(path.join(getDataPath(), filePath.split("/").join(path.sep)));
+        await fsPromises.unlink(path.join(getDataPath(), filePath.split("/").join(path.sep)));
     } catch {
         fs.rmSync(path.join(getDataPath(), filePath.split("/").join(path.sep)), { recursive: true, force: true });
     }
 });
 
 ipcMain.handle("move-file", async (event, from, to) => {
-    await fs.promises.rename(path.join(getDataPath(), from.split("/").join(path.sep)), path.join(getDataPath(), to.split("/").join(path.sep)));
+    await fsPromises.rename(path.join(getDataPath(), from.split("/").join(path.sep)), path.join(getDataPath(), to.split("/").join(path.sep)));
 });
 
 ipcMain.handle("write-file", async (event, text, filePath) => {
-    await fs.promises.writeFile(path.join(getDataPath(), filePath.split("/").join(path.sep)), text);
+    await fsPromises.writeFile(path.join(getDataPath(), filePath.split("/").join(path.sep)), text);
 });
 
 ipcMain.handle("read-file", async (event, filePath) => {
     if (filePath.includes("/")) {
         try {
-            fs.promises.mkdir(path.join(getDataPath(), filePath.split("/").slice(0, -1).join(path.sep)), {
+            fsPromises.mkdir(path.join(getDataPath(), filePath.split("/").slice(0, -1).join(path.sep)), {
                 recursive: true
             });
         } catch {}
     }
 
     try {
-        return await fs.promises.readFile(path.join(getDataPath(), filePath.split("/").join(path.sep)), "utf8");
+        return await fsPromises.readFile(path.join(getDataPath(), filePath.split("/").join(path.sep)), "utf8");
     } catch {
         return "err";
     }
@@ -195,13 +196,17 @@ ipcMain.handle("read-file", async (event, filePath) => {
 
 ipcMain.handle("extract-file", async (event, filePath, destination) => {
     if (filePath.endsWith(".tar.gz")) {
-        await fs.createReadStream(path.join(getDataPath(), filePath.split("/").join(path.sep)))
+        await new Promise(resolve =>
+            fs.createReadStream(path.join(getDataPath(), filePath.split("/").join(path.sep)))
                 .pipe(gunzip())
                 .pipe(tar.extract(path.join(getDataPath(), destination.split("/").join(path.sep))))
-                .promise();
+                .on("finish", resolve)
+        );
     } else {
-        await fs.createReadStream(path.join(getDataPath(), filePath.split("/").join(path.sep)))
+        await new Promise(resolve =>
+            fs.createReadStream(path.join(getDataPath(), filePath.split("/").join(path.sep)))
                 .pipe(unzipper.Extract({ path: path.join(getDataPath(), destination.split("/").join(path.sep)) }))
-                .promise();
+                .on("finish", resolve)
+        );
     }
 });
