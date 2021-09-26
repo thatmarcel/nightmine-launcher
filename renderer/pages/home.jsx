@@ -9,7 +9,7 @@ const jreURLs = {
     "mac-arm": "https://cdn.azul.com/zulu/bin/zulu15.32.15-ca-jre15.0.3-macosx_aarch64.zip",
     "windows-64": "https://cdn.azul.com/zulu/bin/zulu15.32.15-ca-jre15.0.3-win_x64.zip",
     "windows-32": "https://cdn.azul.com/zulu/bin/zulu15.32.15-ca-jre15.0.3-win_i686.zip",
-    "linux-64": "https://cdn.azul.com/zulu/bin/zulu15.32.15-ca-jre15.0.3-linux_x64.tar.gz",
+    "linux-64": "https://github.com/AdoptOpenJDK/semeru8-binaries/releases/download/jdk8u302-b08_openj9-0.27.0/ibm-semeru-open-jre_x64_linux_8u302b08_openj9-0.27.0.tar.gz",
     "linux-32": "https://cdn.azul.com/zulu/bin/zulu15.32.15-ca-jre15.0.3-linux_i686.tar.gz",
     "linux-arm": "https://cdn.azul.com/zulu-embedded/bin/zulu15.32.15-ca-jre15.0.3-linux_aarch64.tar.gz"
 }
@@ -164,7 +164,11 @@ const Home = () => {
             await ipcRenderer.invoke("delete-file", jreArchiveFilePath);
             console.log("JRE archive deleted");
     
-            const jreName = jreURL.split("/").pop().split(".").slice(0, platformInfo.platform === "linux" ? -2 : -1).join(".");
+            let jreName = jreURL.split("/").pop().split(".").slice(0, platformInfo.platform === "linux" ? -2 : -1).join(".");
+
+            if (jreURL.includes("AdoptOpenJDK")) {
+                jreName = jreURL.split("/download/").pop().split("_")[0] + "-jre";
+            }
     
             if (platformInfo.platform === "darwin") {
                 console.log("Moving JRE folder (macOS)...");
