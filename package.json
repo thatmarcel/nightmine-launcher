@@ -12,6 +12,7 @@
     "dev": "nextron",
     "build": "nextron build",
     "build:all": "nextron build --all",
+    "build:win64": "nextron build --win --x64",
     "postinstall": "electron-builder install-app-deps",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
