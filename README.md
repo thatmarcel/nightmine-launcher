@@ -20,3 +20,6 @@ sudo apt-get -y install nightmine-launcher
 
 #### Other distributions
 Alternatively, you can also install the launcher by downloading the AppImage from the [Releases](https://github.com/thatmarcel/nightmine-launcher/releases) and opening it with [AppImageLauncher](https://github.com/TheAssassin/AppImageLauncher)
+
+## Windows
+Download the Setup executable from the [Releases](https://github.com/thatmarcel/nightmine-launcher/releases)
