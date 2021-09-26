@@ -1,5 +1,5 @@
 # Nightmine Launcher
-**Electron-based Launcher for the Nightmine Minecraft client**
+**Electron-based launcher for the Nightmine Minecraft client**
 
 ## Installation
 ### Linux
