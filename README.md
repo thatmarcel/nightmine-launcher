@@ -4,7 +4,7 @@
 ## Installation
 ### Linux
 #### Debian, Ubuntu, Pop!_OS, ...
-To install the launcher on Debian-based distributions, using the APT repository is recommended.
+For installing the launcher on Debian-based distributions, using the APT repository is recommended.
 Adding the repository can be done with the following command:
 
 ```shell
